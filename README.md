@@ -60,5 +60,5 @@ git clone https://github.com/captaineywick/sword-and-supper-auto-play.git
 cd sword-and-supper-auto-play
 
 # Edit the script
-code sword-and-supper.user.js
+code sword-and-supper-auto-play.user.js
 ```
