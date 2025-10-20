@@ -18,7 +18,7 @@
   "use strict";
 
   const CONFIG = {
-    clickInterval: 3000,
+    clickInterval: 1000,
     preferredSkills: JSON.parse(
       localStorage.getItem("preferredSkills") ||
         '["bolt on rage","heal on rage","add rage on heal"]'
@@ -31,6 +31,9 @@
     monolithPriority: JSON.parse(
       localStorage.getItem("monolithPriority") ||
         '["attack","dodge rate","heal"]'
+    ),
+    miniBossAutoFight: JSON.parse(
+      localStorage.getItem("miniBossAutoFight") || "true"
     ),
     log: true,
   };
@@ -96,7 +99,7 @@
     const pickSkill = () => {
       const header = document.querySelector(".ui-panel-header");
       const headerText = header ? header.textContent.toLowerCase() : "";
-      log(headerText);
+      log(`Header: ${headerText}`);
 
       // Shrine upgrade selection ("Increase Attack", "Increase Defense", etc.)
       if (headerText.includes("shrine")) {
@@ -206,6 +209,28 @@
         }
         return; // stop further skill picking for this frame
       }
+
+      // Mini Boss
+      if (
+        headerText.includes("dangerous creatures") &&
+        headerText.includes("investigate?")
+      ) {
+        const fightBtn = Array.from(
+          document.querySelectorAll(".skill-button-label")
+        ).find((b) => /fight/i.test(b.textContent));
+        const nopeBtn = Array.from(
+          document.querySelectorAll(".skill-button-label")
+        ).find((b) => /nope/i.test(b.textContent));
+
+        if (CONFIG.miniBossAutoFight && fightBtn) {
+          fightBtn.click();
+          log("Mini Boss: auto-picked 'Let's Fight!'");
+        } else if (!CONFIG.miniBossAutoFight && nopeBtn) {
+          nopeBtn.click();
+          log("Mini Boss: auto-picked 'Nope'");
+        }
+        return;
+      }
     };
 
     const startAutomation = () => {
@@ -242,9 +267,11 @@
         border: "1px solid #aaa",
         boxShadow: "0 2px 6px rgba(0,0,0,0.25)",
         cursor: "move",
-        width: "220px",
+        minWidth: "260px",
+        maxWidth: "320px",
         display: "inline-block",
         boxSizing: "border-box",
+        overflow: "visible",
       });
 
       // --- Dragging logic ---
@@ -606,6 +633,39 @@
         log(`House event toggle set to: ${CONFIG.houseAutoYes ? "YES" : "NO"}`);
       };
 
+      // Mini Boss toggle
+      // Mini Boss toggle
+      const miniBossToggle = document.createElement("button");
+      miniBossToggle.textContent = "👾";
+      Object.assign(miniBossToggle.style, {
+        cursor: "pointer",
+        padding: "4px",
+        background: CONFIG.miniBossAutoFight ? "#0a0" : "#a00",
+        color: "#fff",
+        border: "none",
+        borderRadius: "8px",
+        fontWeight: "bold",
+        fontSize: "16px",
+        width: "32px",
+        height: "32px",
+      });
+      miniBossToggle.onclick = (e) => {
+        e.stopPropagation();
+        CONFIG.miniBossAutoFight = !CONFIG.miniBossAutoFight;
+        localStorage.setItem(
+          "miniBossAutoFight",
+          JSON.stringify(CONFIG.miniBossAutoFight)
+        );
+        miniBossToggle.style.background = CONFIG.miniBossAutoFight
+          ? "#0a0"
+          : "#a00";
+        log(
+          `Mini Boss toggle set to: ${
+            CONFIG.miniBossAutoFight ? "FIGHT (👾 YES)" : "NOPE (👾 NO)"
+          }`
+        );
+      };
+
       /* Buttons */
       const btnRow = document.createElement("div");
       Object.assign(btnRow.style, {
@@ -619,7 +679,8 @@
         makeBtn("⚙", openSkillEditor),
         makeBtn("⛩", openShrineEditor),
         makeBtn("🗿", openMonolithEditor),
-        houseToggle
+        houseToggle,
+        miniBossToggle
       );
       panel.appendChild(btnRow);
       document.body.appendChild(panel);
