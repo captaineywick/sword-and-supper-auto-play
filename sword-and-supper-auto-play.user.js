@@ -240,6 +240,7 @@
       intervalId = setInterval(() => {
         pickSkill();
         clickAdvance();
+        clickSkip();
       }, CONFIG.clickInterval);
     };
 
@@ -274,11 +275,24 @@
         overflow: "visible",
       });
 
-      // --- Dragging logic ---
+      // --- Dragging logic with persistent position ---
       let isDragging = false;
       let offsetX = 0;
       let offsetY = 0;
 
+      // Load saved position
+      const savedPos = JSON.parse(localStorage.getItem("panelPosition"));
+      if (savedPos) {
+        panel.style.left = savedPos.left;
+        panel.style.top = savedPos.top;
+        panel.style.transform = "";
+      } else {
+        // fallback default position
+        panel.style.left = "20px";
+        panel.style.top = "45%";
+      }
+
+      // Start dragging
       panel.addEventListener("mousedown", (e) => {
         const target = e.target;
         if (["INPUT", "TEXTAREA", "BUTTON"].includes(target.tagName)) return;
@@ -299,6 +313,16 @@
       });
 
       window.addEventListener("mouseup", () => {
+        if (isDragging) {
+          // Save position to localStorage
+          localStorage.setItem(
+            "panelPosition",
+            JSON.stringify({
+              left: panel.style.left,
+              top: panel.style.top,
+            })
+          );
+        }
         isDragging = false;
       });
 
