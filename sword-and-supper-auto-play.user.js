@@ -92,7 +92,8 @@
       if (btn) {
         const btnText = btn.textContent.trim();
         btn.click();
-        log(`Clicked button: "${btnText}"`);
+        stopAutomation();
+        log(`Clicked button: "${btnText}". Stopping the automation.`);
       }
     };
 
@@ -238,6 +239,17 @@
       running = true;
       log("Automation started.");
       intervalId = setInterval(() => {
+        // Stop automation if the Continue button is visible
+        const continueBtn = document.querySelector(
+          ".button-container .continue-button, .continue-button-container .continue-button"
+        );
+
+        if (continueBtn && continueBtn.offsetParent !== null) {
+          log("Detected 'Continue' button: stopping automation.");
+          stopAutomation();
+          return;
+        }
+
         pickSkill();
         clickAdvance();
         clickSkip();
