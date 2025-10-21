@@ -6,15 +6,16 @@
 
 ## Features
 
-- **Auto Skill Picker** — chooses skills based on your preferred configuration.
-- **Shrine Priority Logic** — auto-selects shrine upgrades (`Attack`, `Crit Rate`, `Defense`, etc.) following your set order.
-- **Monolith Sacrifice Logic** — smart detection for risk/reward “Lose X%” events with proper stat targeting.
-- **House Auto Decision** — toggles between “Yes” and “No” on mysterious building encounters.
+- **Auto Skill Picker** — automatically selects abilities based on your configured skill preferences.
+- **Shrine Priority Logic** — prioritizes shrine upgrades (e.g., `attack`, `crit rate`, `defense`, `hp`, `speed`) following your saved order.
+- **Monolith Sacrifice Logic** — works just like shrine priority; intelligently selects the best sacrifice option (`attack`, `speed`, `heal`, etc.) according to your configured priority list.
+- **House Auto Decision** — automatically chooses "Yes" or "No" for mysterious building events based on your toggle preference.
+- **Auto Mini-Boss** — detects "dangerous creatures" events and auto-chooses whether to fight or skip based on your configuration.
 - **Customizable UI Panel**
-  - Draggable and compact white UI.
-  - Editable skill/shrine/monolith preferences stored in `localStorage`.
-  - Persistent settings across sessions.
-- **Tampermonkey Auto-Update** — stays up-to-date with new releases from GitHub.
+  - Compact, draggable white control panel.
+  - Built-in editors for skill, shrine, and monolith configurations.
+  - Settings are saved in `localStorage` and persist across sessions.
+- **Tampermonkey Auto-Update** — automatically fetches the latest version from GitHub to keep your script up-to-date.
 
 ---
 
@@ -41,12 +42,13 @@
 
 Your preferences are automatically saved in the browser’s `localStorage`.
 
-| Setting            | Description                            | Example                      |
-| ------------------ | -------------------------------------- | ---------------------------- |
-| `preferredSkills`  | Skills you prefer to pick first        | `bolt on rage, heal on rage` |
-| `shrinePriority`   | Shrine stat upgrade order              | `attack, crit rate, defense` |
-| `monolithPriority` | Monolith sacrifice preference          | `attack, dodge rate, heal`   |
-| `houseAutoYes`     | Whether to auto-select "YES" on houses | `true` / `false`             |
+| Setting             | Description                            | Example                      |
+| ------------------- | -------------------------------------- | ---------------------------- |
+| `preferredSkills`   | Skills you prefer to pick first        | `bolt on rage, heal on rage` |
+| `shrinePriority`    | Shrine stat upgrade order              | `attack, crit rate, defense` |
+| `monolithPriority`  | Monolith sacrifice preference          | `attack, dodge rate, heal`   |
+| `houseAutoYes`      | Whether to auto-select "YES" on houses | `true` / `false`             |
+| `miniBossAutoFight` | Whether to auto-fight mini boss        | `true` / `false`             |
 
 ---
 
