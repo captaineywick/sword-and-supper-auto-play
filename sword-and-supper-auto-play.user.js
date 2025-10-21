@@ -289,8 +289,8 @@
         border: "1px solid #aaa",
         boxShadow: "0 2px 6px rgba(0,0,0,0.25)",
         cursor: "move",
-        minWidth: "260px",
-        maxWidth: "320px",
+        minWidth: "240px",
+        maxWidth: "280px",
         display: "inline-block",
         boxSizing: "border-box",
         overflow: "visible",
@@ -763,12 +763,13 @@
       const btnRow = document.createElement("div");
       Object.assign(btnRow.style, {
         display: "flex",
-        gap: "4px",
+        justifyContent: "space-between",
         alignItems: "center",
+        gap: "4px",
+        width: "100%",
       });
       btnRow.append(
         autoPlayToggle,
-        makeBtn("⏹", stopAutomation),
         makeBtn("⚙", openSkillEditor),
         makeBtn("⛩", openShrineEditor),
         makeBtn("🗿", openMonolithEditor),
