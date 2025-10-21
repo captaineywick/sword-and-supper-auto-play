@@ -1,3 +1,21 @@
+# Changelog
+
+## v1.1.0 [10/22/2025]
+
+### Enhancements
+
+- Replaced separate **Play (▶)** and **Stop (⏹)** buttons with a single **Auto Play toggle** button.
+
+  - The new button dynamically switches between ⏸ (active) and ▶ (stopped).
+
+- **Auto Play state is now persistent** — it automatically resumes after page reload or reopening the game.
+- Added logic to **auto-close popups when the map is high-level**, ensuring smooth continuous automation.
+
+### UI / UX
+
+- Simplified control panel by reducing button clutter.
+- Improved button colors to clearly indicate automation state (green for running, red for stopped).
+
 ## v1.0.0 [10/22/2025] — Initial Release
 
 ### Features

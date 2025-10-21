@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Sword & Supper Auto Play v1.0.0
 // @namespace    https://reddit.com/user/echo-foxtrot-delta/
-// @version      1.0.0
+// @version      1.1.0
 // @description  Automates Sword & Supper on Reddit/Devvit - auto picks shrine stats, handles monolith sacrifices, house choices, and provides a draggable white UI.
 // @author       Eric
 // @homepageURL  https://github.com/captaineywick/sword-and-supper-auto-play
@@ -248,6 +248,15 @@
           log("Detected 'Continue' button: stopping automation.");
           stopAutomation();
           return;
+        }
+
+        // Auto-close Mission too difficult modal
+        const difficultModal = document.querySelector(
+          ".ui-overlay-content .modal.shown .dismiss-button"
+        );
+        if (difficultModal && difficultModal.offsetParent !== null) {
+          difficultModal.click();
+          log("Closed 'Mission too difficult' modal automatically.");
         }
 
         pickSkill();
@@ -702,6 +711,54 @@
         );
       };
 
+      // Auto Play Toggle Button (Persistent)
+      const autoPlayToggle = document.createElement("button");
+      Object.assign(autoPlayToggle.style, {
+        cursor: "pointer",
+        padding: "4px",
+        color: "#fff",
+        border: "none",
+        borderRadius: "8px",
+        fontWeight: "bold",
+        fontSize: "16px",
+        width: "32px",
+        height: "32px",
+      });
+
+      // Auto play button visual state
+      function updateAutoPlayButtonState() {
+        if (running) {
+          autoPlayToggle.textContent = "⏸"; // pause icon
+          autoPlayToggle.style.background = "#0a0"; // green = active
+        } else {
+          autoPlayToggle.textContent = "▶"; // play icon
+          autoPlayToggle.style.background = "#a00"; // red = stopped
+        }
+      }
+
+      // Toggle function
+      autoPlayToggle.onclick = (e) => {
+        e.stopPropagation();
+        if (!running) {
+          startAutomation();
+          running = true;
+          localStorage.setItem("autoPlayRunning", "true");
+        } else {
+          stopAutomation();
+          running = false;
+          localStorage.setItem("autoPlayRunning", "false");
+        }
+        updateAutoPlayButtonState();
+      };
+
+      // Restore saved state
+      const savedAutoPlay = localStorage.getItem("autoPlayRunning") === "true";
+      if (savedAutoPlay) {
+        startAutomation();
+        running = true;
+      }
+      updateAutoPlayButtonState();
+
       /* Buttons */
       const btnRow = document.createElement("div");
       Object.assign(btnRow.style, {
@@ -710,7 +767,7 @@
         alignItems: "center",
       });
       btnRow.append(
-        makeBtn("▶", startAutomation),
+        autoPlayToggle,
         makeBtn("⏹", stopAutomation),
         makeBtn("⚙", openSkillEditor),
         makeBtn("⛩", openShrineEditor),
