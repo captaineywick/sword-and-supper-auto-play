@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Sword & Supper Auto Play v1.0.0
 // @namespace    https://reddit.com/user/echo-foxtrot-delta/
-// @version      1.1.0
+// @version      1.1.1
 // @description  Automates Sword & Supper on Reddit/Devvit - auto picks shrine stats, handles monolith sacrifices, house choices, and provides a draggable white UI.
 // @author       Eric
 // @homepageURL  https://github.com/captaineywick/sword-and-supper-auto-play
@@ -18,7 +18,7 @@
   "use strict";
 
   const CONFIG = {
-    clickInterval: 1000,
+    clickInterval: 500,
     preferredSkills: JSON.parse(
       localStorage.getItem("preferredSkills") ||
         '["bolt on rage","heal on rage","add rage on heal"]'
@@ -92,15 +92,13 @@
       if (btn) {
         const btnText = btn.textContent.trim();
         btn.click();
-        stopAutomation();
-        log(`Clicked button: "${btnText}". Stopping the automation.`);
+        log(`Clicked button: "${btnText}".`);
       }
     };
 
     const pickSkill = () => {
       const header = document.querySelector(".ui-panel-header");
       const headerText = header ? header.textContent.toLowerCase() : "";
-      log(`Header: ${headerText}`);
 
       // Shrine upgrade selection ("Increase Attack", "Increase Defense", etc.)
       if (headerText.includes("shrine")) {
@@ -236,6 +234,8 @@
 
     const startAutomation = () => {
       if (running) return;
+      clearInterval(intervalId); // safe guard clear the interval before starting auto
+
       running = true;
       log("Automation started.");
       intervalId = setInterval(() => {
@@ -246,6 +246,7 @@
 
         if (continueBtn && continueBtn.offsetParent !== null) {
           log("Detected 'Continue' button: stopping automation.");
+          continueBtn.click();
           stopAutomation();
           return;
         }
@@ -741,11 +742,9 @@
         e.stopPropagation();
         if (!running) {
           startAutomation();
-          running = true;
           localStorage.setItem("autoPlayRunning", "true");
         } else {
           stopAutomation();
-          running = false;
           localStorage.setItem("autoPlayRunning", "false");
         }
         updateAutoPlayButtonState();
@@ -755,7 +754,6 @@
       const savedAutoPlay = localStorage.getItem("autoPlayRunning") === "true";
       if (savedAutoPlay) {
         startAutomation();
-        running = true;
       }
       updateAutoPlayButtonState();
 

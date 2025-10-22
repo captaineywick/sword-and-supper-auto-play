@@ -1,5 +1,13 @@
 # Changelog
 
+## v1.1.1 [10/23/2025]
+
+### Bug Fixes
+
+- Updated automation logic to click the "Continue" button before stopping, ensuring smoother progression between missions.
+- Cleaned redundant running assignments in the autoplay toggle for more consistent behavior and simpler code flow.
+- Removed stopping automation when skip button is clicked.
+
 ## v1.1.0 [10/22/2025]
 
 ### Enhancements
