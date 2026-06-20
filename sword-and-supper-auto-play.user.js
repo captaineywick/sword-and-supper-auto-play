@@ -67,7 +67,7 @@
         (b) => {
           const text = b.textContent.trim().toLowerCase();
           return (
-            (text.includes("advance") || text.includes("battle")) &&
+            (text.includes("advance") || text.includes("battle")  || text.includes("descend")) &&
             b.offsetParent !== null &&
             !b.disabled
           );
