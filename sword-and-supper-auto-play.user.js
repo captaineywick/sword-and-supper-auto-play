@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Sword & Supper Auto Play
 // @namespace    https://reddit.com/user/echo-foxtrot-delta/
-// @version      1.1.2
-// @description  Automates Sword & Supper on Reddit/Devvit - auto picks shrine stats, handles monolith sacrifices, house choices, and provides a draggable white UI.
+// @version      1.1.4
+// @description  Automates Sword & Supper on Reddit/Devvit - auto picks shrine stats, handles monolith sacrifices, house choices, and provides a draggable white UI. Also works in dungeon.
 // @author       Eric
 // @homepageURL  https://github.com/captaineywick/sword-and-supper-auto-play
 // @supportURL   https://github.com/captaineywick/sword-and-supper-auto-play/issues
@@ -76,7 +76,7 @@
         (b) => {
           const text = b.textContent.trim().toLowerCase();
           return (
-            (text.includes("advance") || text.includes("battle")  || text.includes("descend")) &&
+            (text.includes("advance") || text.includes("battle")  || text.includes("descend")) || text.includes("start")) &&
             b.offsetParent !== null &&
             !b.disabled
           );
@@ -109,6 +109,24 @@
       const header = document.querySelector(".ui-panel-header");
       const headerText = header ? header.textContent.toLowerCase() : "";
 
+      // Auto open chest in Dungeon
+      const openBtn = Array.from(
+        document.querySelectorAll(
+            ".skill-button .skill-button-label"
+        )
+      ).find((b) => {
+        return (
+            b.textContent.trim().toLowerCase() === "open" &&
+            b.offsetParent !== null
+        );
+      });
+
+      if (openBtn) {
+        await clickWithDelay(openBtn);
+        log("Auto Open: clicked 'Open'.");
+        return;
+      }
+      
       // Shrine upgrade selection ("Increase Attack", "Increase Defense", etc.)
       if (headerText.includes("shrine")) {
         const shrineSkills = Array.from(
