@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Sword & Supper Auto Play v1.0.0
 // @namespace    https://reddit.com/user/echo-foxtrot-delta/
-// @version      1.1.1
+// @version      1.1.2
 // @description  Automates Sword & Supper on Reddit/Devvit - auto picks shrine stats, handles monolith sacrifices, house choices, and provides a draggable white UI.
 // @author       Eric
 // @homepageURL  https://github.com/captaineywick/sword-and-supper-auto-play
@@ -42,6 +42,15 @@
   let intervalId = null;
   const log = (msg) => CONFIG.log && console.log(`[Sword&Supper] ${msg}`);
 
+  const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+  const clickWithDelay = async (el) => {
+    if (!el) return false;
+    await delay(CONFIG.clickInterval);
+    el.click();
+    return true;
+  };
+
   /* Detect when Reddit opens the game modal */
   function detectModalAndOpen() {
     log("Watching for <rpl-modal-card>...");
@@ -62,12 +71,12 @@
   function runAutomation() {
     log("Running automation logic...");
 
-    const clickAdvance = () => {
+    const clickAdvance = async () => {
       const btn = Array.from(document.querySelectorAll(".advance-button")).find(
         (b) => {
           const text = b.textContent.trim().toLowerCase();
           return (
-            (text.includes("advance") || text.includes("battle")) &&
+            (text.includes("advance") || text.includes("battle")  || text.includes("descend")) &&
             b.offsetParent !== null &&
             !b.disabled
           );
@@ -76,12 +85,12 @@
 
       if (btn) {
         const btnText = btn.textContent.trim();
-        btn.click();
+        await clickWithDelay(btn);
         log(`Clicked button: "${btnText}"`);
       }
     };
 
-    const clickSkip = () => {
+    const clickSkip = async () => {
       const btn = Array.from(
         document.querySelectorAll(".skip-button, .skip-text")
       ).find((b) => {
@@ -91,12 +100,12 @@
 
       if (btn) {
         const btnText = btn.textContent.trim();
-        btn.click();
+        await clickWithDelay(btn);
         log(`Clicked button: "${btnText}".`);
       }
     };
 
-    const pickSkill = () => {
+    const pickSkill = async () => {
       const header = document.querySelector(".ui-panel-header");
       const headerText = header ? header.textContent.toLowerCase() : "";
 
@@ -115,12 +124,12 @@
               b.textContent.toLowerCase().includes(stat.toLowerCase())
             );
             if (match) {
-              match.click();
+              await clickWithDelay(match);
               log(`Selected shrine upgrade: ${stat}`);
               return;
             }
           }
-          shrineSkills[0].click();
+          await clickWithDelay(shrineSkills[0]);
           log("No shrine priority matched: selected first option.");
           return;
         }
@@ -146,7 +155,7 @@
               return txt.includes(`increase ${stat.toLowerCase()}`);
             });
             if (match) {
-              match.click();
+              await clickWithDelay(match);
               log(`Monolith sacrifice chosen: ${stat}`);
               return;
             }
@@ -156,7 +165,7 @@
           const refuse = monolithOptions.find((b) =>
             /refuse/i.test(b.textContent)
           );
-          refuse.click();
+          await clickWithDelay(refuse);
           log("No monolith priority matched: Refused.");
         }
         return;
@@ -176,12 +185,12 @@
               (b) => b.textContent.trim().toLowerCase() === pref.toLowerCase()
             );
             if (match) {
-              match.click();
+              await clickWithDelay(match);
               log(`Selected normal skill: ${pref}`);
               return;
             }
           }
-          skillButtons[0].click();
+          await clickWithDelay(skillButtons[0]);
           log(
             `No preferred skill matched: selected first option → "${skillButtons[0].textContent.trim()}".`
           );
@@ -200,10 +209,10 @@
         ).find((b) => /no/i.test(b.textContent));
 
         if (CONFIG.houseAutoYes && yesBtn) {
-          yesBtn.click();
+          await clickWithDelay(yesBtn);
           log("House event: auto-picked YES 🏠");
         } else if (!CONFIG.houseAutoYes && noBtn) {
-          noBtn.click();
+          await clickWithDelay(noBtn);
           log("House event: auto-picked NO 🏠");
         }
         return; // stop further skill picking for this frame
@@ -222,10 +231,10 @@
         ).find((b) => /nope/i.test(b.textContent));
 
         if (CONFIG.miniBossAutoFight && fightBtn) {
-          fightBtn.click();
+          await clickWithDelay(fightBtn);
           log("Mini Boss: auto-picked 'Let's Fight!'");
         } else if (!CONFIG.miniBossAutoFight && nopeBtn) {
-          nopeBtn.click();
+          await clickWithDelay(nopeBtn);
           log("Mini Boss: auto-picked 'Nope'");
         }
         return;
@@ -238,7 +247,7 @@
 
       running = true;
       log("Automation started.");
-      intervalId = setInterval(() => {
+      intervalId = setInterval(async () => {
         // Stop automation if the Continue button is visible
         const continueBtn = document.querySelector(
           ".button-container .continue-button, .continue-button-container .continue-button"
@@ -246,7 +255,7 @@
 
         if (continueBtn && continueBtn.offsetParent !== null) {
           log("Detected 'Continue' button: stopping automation.");
-          continueBtn.click();
+          await clickWithDelay(continueBtn);
           stopAutomation();
           return;
         }
@@ -256,13 +265,13 @@
           ".ui-overlay-content .modal.shown .dismiss-button"
         );
         if (difficultModal && difficultModal.offsetParent !== null) {
-          difficultModal.click();
+          await clickWithDelay(difficultModal);
           log("Closed 'Mission too difficult' modal automatically.");
         }
 
-        pickSkill();
-        clickAdvance();
-        clickSkip();
+        await pickSkill();
+        await clickAdvance();
+        await clickSkip();
       }, CONFIG.clickInterval);
     };
 
