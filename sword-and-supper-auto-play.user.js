@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         Sword & Supper Auto Play v1.0.0
+// @name         Sword & Supper Auto Play
 // @namespace    https://reddit.com/user/echo-foxtrot-delta/
 // @version      1.1.2
 // @description  Automates Sword & Supper on Reddit/Devvit - auto picks shrine stats, handles monolith sacrifices, house choices, and provides a draggable white UI.
