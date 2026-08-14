@@ -72,16 +72,24 @@
     log("Running automation logic...");
 
     const clickAdvance = async () => {
-      const btn = Array.from(document.querySelectorAll(".advance-button")).find(
-        (b) => {
-          const text = b.textContent.trim().toLowerCase();
-          return (
-            (text.includes("advance") || text.includes("battle")  || text.includes("descend")) || text.includes("start")) &&
-            b.offsetParent !== null &&
-            !b.disabled
-          );
-        }
-      );
+      const btn = Array.from(
+        document.querySelectorAll(".advance-button")
+      ).find((b) => {
+        const text = b.textContent
+          .trim()
+          .toLowerCase();
+
+        return (
+          (
+            text.includes("advance") ||
+            text.includes("battle") ||
+            text.includes("descend") ||
+            text.includes("start")
+          ) &&
+          b.offsetParent !== null &&
+          !b.disabled
+        );
+      });
 
       if (btn) {
         const btnText = btn.textContent.trim();
