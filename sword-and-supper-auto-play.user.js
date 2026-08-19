@@ -35,6 +35,10 @@
     miniBossAutoFight: JSON.parse(
       localStorage.getItem("miniBossAutoFight") || "true"
     ),
+    matsuriChefPriority: JSON.parse(
+      localStorage.getItem("matsuriChefPriority") ||
+        '["Onion","Flour","Mushroom","Egg","Cabbage"]'
+    ),
     log: true,
   };
 
@@ -224,6 +228,32 @@
         }
       }
 
+      // Chef in Hurry
+      if (
+        headerText.includes("") 
+      ) {
+        const skillButtons = Array.from(
+          document.querySelectorAll(".skill-button-label")
+        );
+        if (skillButtons.length > 0) {
+          for (const pref of CONFIG.matsuriChefPriority) {
+            const match = skillButtons.find(
+              (b) => b.textContent.trim().toLowerCase() === pref.toLowerCase()
+            );
+            if (match) {
+              await clickWithDelay(match);
+              log(`Selected normal skill: ${pref}`);
+              return;
+            }
+          }
+          await clickWithDelay(skillButtons[0]);
+          log(
+            `No preferred skill matched: selected first option → "${skillButtons[0].textContent.trim()}".`
+          );
+          return;
+        }
+      }
+
       // House
       const houseHeader = document.querySelector(".ui-panel-header");
       if (houseHeader && /mysterious building/i.test(houseHeader.textContent)) {
@@ -243,7 +273,8 @@
         }
         return; // stop further skill picking for this frame
       }
-      // Chef in Hurry
+      
+      /*// Chef in Hurry
       if (headerText.includes("chef")) {
         const skillButtons = Array.from(
           document.querySelectorAll('.ui-panel-content-skills .skill-button')
@@ -256,7 +287,7 @@
           log(`Chef event: randomly picked option #${randomIndex + 1} 👨‍🍳`);
           return;
         }
-      }
+      }*/
     
       // Mini Boss
       if (
