@@ -243,7 +243,21 @@
         }
         return; // stop further skill picking for this frame
       }
+      // Chef in Hurry
+      if (headerText.includes("chef")) {
+        const skillButtons = Array.from(
+          document.querySelectorAll('.ui-panel-content-skills .skill-button')
+        );
 
+        if (skillButtons.length > 0) {
+          const randomIndex = Math.floor(Math.random() * skillButtons.length);
+          const chosenBtn = skillButtons[randomIndex];
+          await clickWithDelay(chosenBtn);
+          log(`Chef event: randomly picked option #${randomIndex + 1} 👨‍🍳`);
+          return;
+        }
+      }
+    
       // Mini Boss
       if (
         headerText.includes("dangerous creatures") &&
@@ -265,6 +279,7 @@
         }
         return;
       }
+      
     };
 
     const startAutomation = () => {
